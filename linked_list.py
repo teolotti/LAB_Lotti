@@ -2,8 +2,8 @@ from node import*
 
 
 class LinkedList:
-    size = 0
     def __init__(self):
+        self.size = 0
         self.head = None
 
     def is_empty(self):

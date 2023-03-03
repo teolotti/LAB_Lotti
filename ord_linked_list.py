@@ -2,7 +2,6 @@ from linked_list import *
 
 
 class OrdLinkedList(LinkedList):
-
     def insert(self, data):
         if self.is_empty():
             super().insert(data)
