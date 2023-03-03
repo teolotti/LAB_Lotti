@@ -1,5 +1,6 @@
 from node import*
 
+
 class LinkedList:
     size = 0
     def __init__(self):
@@ -9,9 +10,10 @@ class LinkedList:
         return self.head == None
 
     def insert(self, data):
-        temp = Node(data);
+        temp = Node(data)
         temp.set_next(self.head)
         self.head = temp
+        self.size += 1
 
     def extractMax(self):
         if self.is_empty():
@@ -22,7 +24,7 @@ class LinkedList:
             temp = prev
             prev_t = None
             while current != None:
-                if temp.get_data < current.get_data:
+                if temp.get_priority < current.get_priority:
                     temp = current
                     prev_t = prev
                 prev = current
@@ -31,7 +33,34 @@ class LinkedList:
                 self.head = temp.get_next()
             else:
                 prev_t.set_next(temp.get_next())
+        self.size -= 1
+        return temp
 
+    def remove(self, data):
+        current = self.head
+        previous = None
+        found = False
+        while not found and current != None:
+            if current.get_priority() == data:
+                found = True
+            else:
+                previous = current
+                current = current.get_next()
+        if previous == None:
+            self.head = current.get_next()
+        else:
+            previous.set_next(current.get_next())
+        self.size -= 1
+
+    def search(self, item):
+        current = self.head
+        found = False
+        while current != None and not found:
+            if current.get_priority() == item:
+                found = True
+            else:
+                current = current.get_next()
+        return found
 
 
 
