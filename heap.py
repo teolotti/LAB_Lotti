@@ -6,17 +6,17 @@ class Heap(PriorityQueueInterface):
     def __init__(self, max):
         self.maxNum = max
         self.size = 0
-        self.A = [0]*(self.maxNum+1)
+        self.A = []
         # Non considero la posizione 0 dell' array in nessun caso, rimarrà vuota
 
     def parent(self, i):
         return i // 2
 
     def left(self, i):
-        return 2*i
+        return 2*i + 1
 
     def right(self, i):
-        return 2*i+1
+        return 2*i + 2
 
     def swap(self, a, b):
         self.A[a], self.A[b] = self.A[b], self.A[a]
@@ -35,23 +35,22 @@ class Heap(PriorityQueueInterface):
             self.maxHeapify(largest)
 
     def maximum(self):
-        return self.A[1]
+        return self.A[0]
 
     def extractMax(self):
-        temp = self.A[1]
-        self.A[1] = self.A[self.size]
+        temp = self.A[0]
+        self.A[0] = self.A[self.size-1]
         self.size -= 1
-        self.maxHeapify(1)
+        self.maxHeapify(0)
         return temp
 
     def insert(self, data):
-        self.size += 1
         self.A.insert(self.size, data)
         i = self.size
-        while i > 1 and self.A[i] > self.A[self.parent(i)]:
+        while self.A[i] > self.A[self.parent(i)]:
             self.swap(i, self.parent(i))
             i = self.parent(i)
-
+        self.size += 1
 
 
 
