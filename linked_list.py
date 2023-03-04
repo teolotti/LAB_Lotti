@@ -1,7 +1,9 @@
 from node import*
 
 
-class LinkedList:
+from priority_queue_interface import*
+
+class LinkedList(PriorityQueueInterface):
     def __init__(self):
         self.size = 0
         self.head = None

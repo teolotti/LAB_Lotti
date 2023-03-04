@@ -8,13 +8,16 @@ class OrdLinkedList(LinkedList):
         else:
             prev = None
             current = self.head
-            while data <= current.get_priority() and current != None:
+            while current != None and data <= current.get_priority():
                 prev = current
-                current = current.get_next
-            temp = Node(data)
-            temp.set_next(current)
-            prev.set_next(temp)
-            self.size += 1
+                current = current.get_next()
+            if prev == None:
+                super().insert(data)
+            else:
+                temp = Node(data)
+                temp.set_next(current)
+                prev.set_next(temp)
+                self.size += 1
 
     def extractMax(self):
         if self.is_empty():

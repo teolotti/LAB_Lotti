@@ -1,10 +1,12 @@
 from math import*
+from priority_queue_interface import *
 
 
-class Heap:
-    def __init__(self):
+class Heap(PriorityQueueInterface):
+    def __init__(self, max):
+        self.maxNum = max
         self.size = 0
-        self.A = []
+        self.A = [0]*(self.maxNum+1)
         # Non considero la posizione 0 dell' array in nessun caso, rimarrà vuota
 
     def parent(self, i):
@@ -44,7 +46,7 @@ class Heap:
 
     def insert(self, data):
         self.size += 1
-        self.A[self.size] = data
+        self.A.insert(self.size, data)
         i = self.size
         while i > 1 and self.A[i] > self.A[self.parent(i)]:
             self.swap(i, self.parent(i))
