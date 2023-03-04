@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import sys
 
 sys.setrecursionlimit(100000)
-N = 10000
+N = 100000
 
 def randomList(n):
     a = np.arange(n)
@@ -64,19 +64,19 @@ def extractTimeTest(queue):
 def main():
 
     #PRIMO TEST
-    #qh = createQueue(True)
-    #ith = insertTimeTest(300, qh, True)
-    #plt.plot(np.arange(qh.size+1), ith)
-    #plt.show()
+    qh = createQueue(True)
+    ith = insertTimeTest(10000, qh, True)
+    plt.plot(np.arange(qh.size+1), ith)
 
-    #ql = createQueue(False)
-    #itl = insertTimeTest(300, ql, True)
-    #plt.plot(np.arange(ql.size+1), itl)
-    #plt.show()
+
+    ql = createQueue(False)
+    itl = insertTimeTest(10000, ql, True)
+    plt.plot(np.arange(ql.size+1), itl)
+
 
     qlo = createQueue(False, True)
-    itlo = insertTimeTest(300, qlo, True)
-    plt.plot(np.arange(qlo.size+1), itlo)
+    itlo = insertTimeTest(10000, qlo, True)
+    #plt.plot(np.arange(qlo.size+1), itlo)
     plt.show()
 
 
