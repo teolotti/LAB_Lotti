@@ -5,9 +5,10 @@ class Heap:
     def __init__(self):
         self.size = 0
         self.A = []
+        # Non considero la posizione 0 dell' array in nessun caso, rimarrà vuota
 
     def parent(self, i):
-        return floor(i/2)
+        return i // 2
 
     def left(self, i):
         return 2*i
@@ -31,5 +32,24 @@ class Heap:
             self.swap(i, largest)
             self.maxHeapify(largest)
 
-    #TODO
-    #build max heap(?), insert, maximum, extract max, increase key
+    def maximum(self):
+        return self.A[1]
+
+    def extractMax(self):
+        temp = self.A[1]
+        self.A[1] = self.A[self.size]
+        self.size -= 1
+        self.maxHeapify(1)
+        return temp
+
+    def insert(self, data):
+        self.size += 1
+        self.A[self.size] = data
+        i = self.size
+        while i > 1 and self.A[i] > self.A[self.parent(i)]:
+            self.swap(i, self.parent(i))
+            i = self.parent(i)
+
+
+
+
