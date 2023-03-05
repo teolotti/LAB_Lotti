@@ -65,18 +65,18 @@ def main():
 
     #PRIMO TEST
     qh = createQueue(True)
-    ith = insertTimeTest(10000, qh, True)
+    ith = insertTimeTest(100, qh, True)
     plt.plot(np.arange(qh.size+1), ith)
 
 
     ql = createQueue(False)
-    itl = insertTimeTest(10000, ql, True)
+    itl = insertTimeTest(100, ql, True)
     plt.plot(np.arange(ql.size+1), itl)
 
 
     qlo = createQueue(False, True)
-    itlo = insertTimeTest(10000, qlo, True)
-    #plt.plot(np.arange(qlo.size+1), itlo)
+    itlo = insertTimeTest(100, qlo, True)
+    plt.plot(np.arange(qlo.size+1), itlo)
     plt.show()
 
 

@@ -3,14 +3,14 @@ from priority_queue_interface import *
 
 
 class Heap(PriorityQueueInterface):
-    def __init__(self, max):
+    def __init__(self, max): #per questa implementazione max non necessario
         self.maxNum = max
         self.size = 0
         self.A = []
         # Non considero la posizione 0 dell' array in nessun caso, rimarrà vuota
 
     def parent(self, i):
-        return i // 2
+        return (i-1) // 2
 
     def left(self, i):
         return 2*i + 1
