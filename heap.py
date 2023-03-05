@@ -1,5 +1,6 @@
 from math import*
 from priority_queue_interface import *
+import sys
 
 
 class Heap(PriorityQueueInterface):
@@ -7,6 +8,7 @@ class Heap(PriorityQueueInterface):
         self.maxNum = max
         self.size = 0
         self.A = [0]*(self.maxNum+1)
+        self.A[0] = sys.maxsize
         # Non considero la posizione 0 dell' array in nessun caso, rimarrà vuota
 
     def parent(self, i):
@@ -45,6 +47,8 @@ class Heap(PriorityQueueInterface):
         return temp
 
     def insert(self, data):
+        if self.size >= self.maxNum:
+            return
         self.size += 1
         self.A.insert(self.size, data)
         i = self.size

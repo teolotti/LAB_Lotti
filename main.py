@@ -76,7 +76,7 @@ def main():
 
     qlo = createQueue(False, True)
     itlo = insertTimeTest(10000, qlo, True)
-    #plt.plot(np.arange(qlo.size+1), itlo)
+    plt.plot(np.arange(qlo.size+1), itlo)
     plt.show()
 
 
