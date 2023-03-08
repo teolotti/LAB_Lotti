@@ -20,7 +20,7 @@ def randomList(n):
 
 def createQueue(heap, ord=False):
     if heap:
-        q = Heap(N)
+        q = Heap()
     elif not ord:
         q = LinkedList()
     else:

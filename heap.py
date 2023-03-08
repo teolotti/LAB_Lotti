@@ -3,14 +3,13 @@ from priority_queue_interface import *
 
 
 class Heap(PriorityQueueInterface):
-    def __init__(self, max):
-        self.maxNum = max
+    def __init__(self):
         self.size = 0
         self.A = []
         # Non considero la posizione 0 dell' array in nessun caso, rimarrà vuota
 
     def parent(self, i):
-        return i // 2
+        return (i-1) // 2
 
     def left(self, i):
         return 2*i + 1
@@ -24,11 +23,11 @@ class Heap(PriorityQueueInterface):
     def maxHeapify(self, i):
         l = self.left(i)
         r = self.right(i)
-        if l <= self.size and self.A[l] >= self.A[i]:
+        if l < self.size and self.A[l] > self.A[i]:
             largest = l
         else:
             largest = i
-        if r <= self.size and self.A[r] >= self.A[r]:
+        if r < self.size and self.A[r] > self.A[r]:
             largest = r
         if largest != i:
             self.swap(i, largest)
