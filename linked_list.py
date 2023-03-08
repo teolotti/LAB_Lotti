@@ -26,7 +26,7 @@ class LinkedList(PriorityQueueInterface):
             temp = prev
             prev_t = None
             while current != None:
-                if temp.get_priority < current.get_priority:
+                if temp.get_priority() < current.get_priority():
                     temp = current
                     prev_t = prev
                 prev = current

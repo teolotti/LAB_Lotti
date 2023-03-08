@@ -29,7 +29,7 @@ def createQueue(heap, ord=False):
 
 
 def insertTimeTest(n, queue, random, reversed=False):
-    insertTime = [0]
+    insertTime = []
 
     if random:
         list = randomList(n)
@@ -38,45 +38,57 @@ def insertTimeTest(n, queue, random, reversed=False):
     else:
         list = np.arange(n)[::-1]
 
-    count = 0
+
     for i in list:
-        count += 1
         start = timer()
         queue.insert(i)
         end = timer()
-        insertTime.append(((end-start)/queue.size) + insertTime[count-1]) #WHY
+        insertTime.append((end-start)/queue.size) #WHY
+
+    for i in range(1,n):
+        insertTime[i] += insertTime[i-1]
 
     return insertTime
 
 
 def extractTimeTest(queue):
+    n = queue.size
     extractTime = []
 
-    for i in range(queue.get_size() + 1):
+    for i in range(n):
         start = timer()
         queue.extractMax()
         end = timer()
-        extractTime.insert(queue.get_size()-i, round(end - start, 5)) #FIXME
+        extractTime.insert(queue.size, (end - start)/(queue.size+1))
+
+    for i in range(1,n):
+        extractTime[i] += extractTime[i-1]
 
     return extractTime
+
 
 
 def main():
 
     #PRIMO TEST
     qh = createQueue(True)
-    ith = insertTimeTest(10000, qh, True)
-    plt.plot(np.arange(qh.size+1), ith)
+    ith = insertTimeTest(100, qh, True)
+    eth = extractTimeTest(qh)
+    plt.plot(np.arange(100), eth)
 
 
     ql = createQueue(False)
-    itl = insertTimeTest(10000, ql, True)
-    #plt.plot(np.arange(ql.size+1), itl)
+    itl = insertTimeTest(100, ql, True)
+    etl = extractTimeTest(ql)
+    plt.plot(np.arange(100), etl)
 
 
     qlo = createQueue(False, True)
-    itlo = insertTimeTest(1000, qlo, True)
-    #plt.plot(np.arange(qlo.size+1), itlo)
+    itlo = insertTimeTest(100, qlo, True)
+    etlo = extractTimeTest(qlo)
+    plt.plot(np.arange(100), etlo)
+
+    plt.legend(['heap', 'list', 'ord_list'])
     plt.show()
 
 
