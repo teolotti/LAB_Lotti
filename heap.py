@@ -5,7 +5,7 @@ from priority_queue_interface import *
 class Heap(PriorityQueueInterface):
     def __init__(self):
         self.size = 0
-        self.A = []
+        self.A = [0]*(self.maxNum+1)
         # Non considero la posizione 0 dell' array in nessun caso, rimarrà vuota
 
     def parent(self, i):

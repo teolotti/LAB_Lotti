@@ -67,7 +67,6 @@ def main():
     qh = createQueue(True)
     ith = insertTimeTest(10000, qh, True)
     plt.plot(np.arange(qh.size+1), ith)
-    print(qh.A)
 
 
     ql = createQueue(False)
