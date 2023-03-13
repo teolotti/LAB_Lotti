@@ -92,6 +92,8 @@ def main():
     # PRIMO TEST
     plot_generator(False, 10000, True, True, True)
 
+    # plt.xlabel--plt.ylabel--plt.title--plt.legend--plt.show
+
     plt.legend(['heap'])
     plt.show()
 
