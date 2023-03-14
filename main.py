@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import sys
 
 sys.setrecursionlimit(100000)
-N = 100000
+R = 5000
 
 
 def randomList(n, r):
@@ -70,7 +70,7 @@ def extractTimeTest(queue):
     return extractTime
 
 
-def plot_generator(q_type, n, t_type, rand, ord=False, rev=False, r=5000):
+def plot_generator(q_type, n, t_type, rand, ord=False, rev=False, r=R):
     # heap se q_type == True, lista altrimenti
     # lista ordinata se ord == True, lista classica altrimenti
     # n: numero di elementi inseriti/estratti dalla coda
