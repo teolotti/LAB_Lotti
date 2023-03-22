@@ -70,7 +70,7 @@ def extractTimeTest(queue):
     return extractTime
 
 
-def plot_generator(q_type, n, t_type, rand, ord=False, rev=False, r=R):
+def plot_generator(q_type, n, ins_test, ex_test, rand, ord=False, rev=False, r=R):
     # heap se q_type == True, lista altrimenti
     # lista ordinata se ord == True, lista classica altrimenti
     # n: numero di elementi inseriti/estratti dalla coda
@@ -82,15 +82,15 @@ def plot_generator(q_type, n, t_type, rand, ord=False, rev=False, r=R):
     q = createQueue(q_type, ord)
     it = insertTimeTest(n, q, rand, r, rev)
     et = extractTimeTest(q)
-    if t_type:
+    if ins_test:
         plt.plot(np.arange(n), it)
-    else:
+    if ex_test:
         plt.plot(np.arange(n), et)
 
 
 def main():
     # PRIMO TEST
-    plot_generator(False, 10000, True, True, True)
+    plot_generator(True, 10000, True, False, True)
 
     # plt.xlabel--plt.ylabel--plt.title--plt.legend--plt.show
 
