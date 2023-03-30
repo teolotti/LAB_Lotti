@@ -485,7 +485,7 @@
 											"top": 620,
 											"width": 183,
 											"height": 13,
-											"text": "+insert()",
+											"text": "+insert(data)",
 											"horizontalAlignment": 0
 										},
 										{
@@ -2494,6 +2494,19 @@
 							"propertyLabel": {
 								"$ref": "AAAAAAGGwkg2NrXZZGY="
 							}
+						},
+						{
+							"_type": "UMLTextView",
+							"_id": "AAAAAAGHCdosczxNYLo=",
+							"_parent": {
+								"$ref": "AAAAAAFF+qBtyKM79qY="
+							},
+							"font": "Arial;13;0",
+							"left": 728,
+							"top": 80,
+							"width": 89,
+							"height": 25,
+							"text": "Interface"
 						}
 					]
 				},
@@ -2704,7 +2717,18 @@
 							"_parent": {
 								"$ref": "AAAAAAGGqC2QlGJCLG0="
 							},
-							"name": "insert"
+							"name": "insert",
+							"parameters": [
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGHCdlujzdW3zU=",
+									"_parent": {
+										"$ref": "AAAAAAGGqMCmtnJBUSE="
+									},
+									"name": "data",
+									"type": ""
+								}
+							]
 						},
 						{
 							"_type": "UMLOperation",

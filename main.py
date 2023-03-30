@@ -70,11 +70,13 @@ def extractTimeTest(queue):
     return extractTime
 
 
-def plot_generator(q_type, n, ins_test, ex_test, rand, ord=False, rev=False, r=R):
+def plot_generator(q_type, n, ins_test, ex_test, rand, style="", ord=False, rev=False, r=R):
     # heap se q_type == True, lista altrimenti
     # lista ordinata se ord == True, lista classica altrimenti
     # n: numero di elementi inseriti/estratti dalla coda
-    # insert test se t_type == True, extract test altrimenti
+    # insert test se ins_test == True
+    # extract test se ex_test == True
+    # style == "o" per plot discreto + lettera per il colore
     # input randomizzato se rand == True, ordinato altrimenti
     # r: range dei numeri in input
     # input reversed (decrescente) se rev == True, crescente altrimenti
@@ -83,18 +85,23 @@ def plot_generator(q_type, n, ins_test, ex_test, rand, ord=False, rev=False, r=R
     it = insertTimeTest(n, q, rand, r, rev)
     et = extractTimeTest(q)
     if ins_test:
-        plt.plot(np.arange(n), it)
+        plt.plot(np.arange(n), it, style) # "o" per plot discreto, altre lettere per colore
     if ex_test:
-        plt.plot(np.arange(n), et)
+        plt.plot(np.arange(n), et, style)
+    plt.xlabel("Numero di operazioni")
+    plt.ylabel("Tempo(s)")
 
 
 def main():
     # PRIMO TEST
-    plot_generator(True, 10000, True, False, True)
+    plot_generator(True, 1000, True, False, True)
+    plot_generator(False, 1000, True, False, True)
+    plot_generator(False, 1000, True, False, True, "", True)
+
 
     # plt.xlabel--plt.ylabel--plt.title--plt.legend--plt.show
 
-    plt.legend(['heap'])
+    plt.legend(["heap", "lista", "lista ord"])
     plt.show()
 
 

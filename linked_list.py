@@ -1,7 +1,7 @@
-from node import*
+from node import *
 
+from priority_queue_interface import *
 
-from priority_queue_interface import*
 
 class LinkedList(PriorityQueueInterface):
     def __init__(self):
@@ -9,7 +9,7 @@ class LinkedList(PriorityQueueInterface):
         self.head = None
 
     def is_empty(self):
-        return self.head == None
+        return self.head is None
 
     def insert(self, data):
         temp = Node(data)
@@ -63,11 +63,3 @@ class LinkedList(PriorityQueueInterface):
             else:
                 current = current.get_next()
         return found
-
-
-
-
-
-
-
-
