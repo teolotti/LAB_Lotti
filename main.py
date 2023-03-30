@@ -62,7 +62,7 @@ def extractTimeTest(queue):
         start = timer()
         queue.extractMax()
         end = timer()
-        extractTime.insert(queue.size, (end - start) / (queue.size + 1))
+        extractTime.insert(queue.size, (end - start)/ (queue.size + 1))
 
     for i in range(1, n):
         extractTime[i] += extractTime[i - 1]
@@ -83,6 +83,7 @@ def plot_generator(q_type, n, ins_test, ex_test, rand, style="", ord=False, rev=
 
     q = createQueue(q_type, ord)
     it = insertTimeTest(n, q, rand, r, rev)
+    print(it) #per capire
     et = extractTimeTest(q)
     if ins_test:
         plt.plot(np.arange(n), it, style) # "o" per plot discreto, altre lettere per colore
