@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import sys
 
 sys.setrecursionlimit(100000)
-R = 5000
+R = 1000000
 
 
 def randomList(n, r):
@@ -34,7 +34,6 @@ def createQueue(heap, ord=False):
 
 
 def insertTimeTest(n, queue, random, r, reversed=False):
-    insertTime = []
 
     values = randomList(n, r)
     if not random:
@@ -42,16 +41,16 @@ def insertTimeTest(n, queue, random, r, reversed=False):
         if reversed:
             values = values[::-1]
 
-    for i in values:
-        start = timer()
-        queue.insert(i)
-        end = timer()
-        insertTime.append((end - start) / queue.size)  # WHY
+    m = np.zeros((1, n))
 
-    for i in range(1, n):
-        insertTime[i] += insertTime[i - 1]
+    for p in range(1):
+        for i, t in enumerate(values):
+            start = timer()
+            queue.insert(t)
+            end = timer()
+            m[p, i] = (end-start)
 
-    return insertTime
+    return np.mean(m, 0)
 
 
 def extractTimeTest(queue):
@@ -62,7 +61,7 @@ def extractTimeTest(queue):
         start = timer()
         queue.extractMax()
         end = timer()
-        extractTime.insert(queue.size, (end - start)/ (queue.size + 1))
+        extractTime.insert(queue.size, (end - start) / (queue.size + 1))
 
     for i in range(1, n):
         extractTime[i] += extractTime[i - 1]
@@ -83,10 +82,10 @@ def plot_generator(q_type, n, ins_test, ex_test, rand, style="", ord=False, rev=
 
     q = createQueue(q_type, ord)
     it = insertTimeTest(n, q, rand, r, rev)
-    print(it) #per capire
+    print(it)  # per capire
     et = extractTimeTest(q)
     if ins_test:
-        plt.plot(np.arange(n), it, style) # "o" per plot discreto, altre lettere per colore
+        plt.plot(np.arange(n), it, style)  # "o" per plot discreto, altre lettere per colore
     if ex_test:
         plt.plot(np.arange(n), et, style)
     plt.xlabel("Numero di operazioni")
@@ -95,10 +94,9 @@ def plot_generator(q_type, n, ins_test, ex_test, rand, style="", ord=False, rev=
 
 def main():
     # PRIMO TEST
-    plot_generator(True, 1000, True, False, True)
-    plot_generator(False, 1000, True, False, True)
-    plot_generator(False, 1000, True, False, True, "", True)
-
+    #plot_generator(True, 100, True, False, True)
+    #plot_generator(False, 50, True, False, True)
+    plot_generator(False, 50, True, False, True, "", True)
 
     # plt.xlabel--plt.ylabel--plt.title--plt.legend--plt.show
 
