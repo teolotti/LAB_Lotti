@@ -1,4 +1,4 @@
-from math import*
+from math import *
 from priority_queue_interface import *
 
 
@@ -9,13 +9,13 @@ class Heap(PriorityQueueInterface):
         # Non considero la posizione 0 dell' array in nessun caso, rimarrà vuota
 
     def parent(self, i):
-        return (i-1) // 2
+        return (i - 1) // 2
 
     def left(self, i):
-        return 2*i + 1
+        return 2 * i + 1
 
     def right(self, i):
-        return 2*i + 2
+        return 2 * i + 2
 
     def swap(self, a, b):
         self.A[a], self.A[b] = self.A[b], self.A[a]
@@ -38,7 +38,7 @@ class Heap(PriorityQueueInterface):
 
     def extractMax(self):
         temp = self.A[0]
-        self.A[0] = self.A[self.size-1]
+        self.A[0] = self.A[self.size - 1]
         self.size -= 1
         self.maxHeapify(0)
         return temp
@@ -46,10 +46,7 @@ class Heap(PriorityQueueInterface):
     def insert(self, data):
         self.A.insert(self.size, data)
         i = self.size
-        while self.A[i] > self.A[self.parent(i)]:
+        while self.A[i] > self.A[self.parent(i)] and self.parent(i) >= 0:
             self.swap(i, self.parent(i))
             i = self.parent(i)
         self.size += 1
-
-
-

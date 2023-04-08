@@ -6,7 +6,6 @@ from linked_list import *
 from node import *
 from ord_linked_list import *
 from heap import *
-import numpy as num
 from timeit import default_timer as timer
 import matplotlib.pyplot as plt
 import sys
@@ -15,7 +14,7 @@ sys.setrecursionlimit(100000)
 R = 1000000
 
 
-def randomList(n, r):
+def randomList(n, r):  # PROBLEMIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII GUARDA NOTEBOOK
     a = []
     for i in range(n):
         el = random.randint(0, r)
@@ -33,24 +32,22 @@ def createQueue(heap, ord=False):
     return q
 
 
-def insertTimeTest(n, queue, random, r, reversed=False):
-
+def insertTimeTest(n, queue, random, r, reversed):
     values = randomList(n, r)
     if not random:
-        np.sort(values)
+        values = np.sort(values)
         if reversed:
             values = values[::-1]
 
-    m = np.zeros((1, n))
+    it = []
 
-    for p in range(1):
-        for i, t in enumerate(values):
-            start = timer()
-            queue.insert(t)
-            end = timer()
-            m[p, i] = (end-start)
+    for t in values:
+        start = timer()
+        queue.insert(t)
+        end = timer()
+        it.append(end - start)
 
-    return np.mean(m, 0)
+    return it
 
 
 def extractTimeTest(queue):
@@ -69,7 +66,7 @@ def extractTimeTest(queue):
     return extractTime
 
 
-def plot_generator(q_type, n, ins_test, ex_test, rand, style="", ord=False, rev=False, r=R):
+def plot_generator(q_type, n, ins_test, ex_test, rand, style="", ord=False, rev=False, r=R, num_t=200):
     # heap se q_type == True, lista altrimenti
     # lista ordinata se ord == True, lista classica altrimenti
     # n: numero di elementi inseriti/estratti dalla coda
@@ -81,22 +78,26 @@ def plot_generator(q_type, n, ins_test, ex_test, rand, style="", ord=False, rev=
     # input reversed (decrescente) se rev == True, crescente altrimenti
 
     q = createQueue(q_type, ord)
-    it = insertTimeTest(n, q, rand, r, rev)
-    print(it)  # per capire
-    et = extractTimeTest(q)
+    mit = np.zeros((num_t, n))
+    met = np.zeros((num_t, n))
+    for p in range(num_t):
+        it = insertTimeTest(n, q, rand, r, rev)
+        et = extractTimeTest(q)
+        mit[p, :] = it
+        met[p, :] = et
     if ins_test:
-        plt.plot(np.arange(n), it, style)  # "o" per plot discreto, altre lettere per colore
+        plt.plot(np.arange(n), np.mean(mit, 0), style)  # "o" per plot discreto, altre lettere per colore
     if ex_test:
-        plt.plot(np.arange(n), et, style)
+        plt.plot(np.arange(n), np.mean(met, 0), style)
     plt.xlabel("Numero di operazioni")
     plt.ylabel("Tempo(s)")
 
 
 def main():
     # PRIMO TEST
-    #plot_generator(True, 100, True, False, True)
-    #plot_generator(False, 50, True, False, True)
-    plot_generator(False, 50, True, False, True, "", True)
+    plot_generator(True, 1000, True, False, False) #problemi su input random e reversed
+    plot_generator(False, 100, True, False, False) #funziona insert
+    plot_generator(False, 1000, True, False, False, "", True) #così funziona insert
 
     # plt.xlabel--plt.ylabel--plt.title--plt.legend--plt.show
 
