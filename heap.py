@@ -1,55 +1,86 @@
-from math import*
-from priority_queue_interface import *
+"""Implementation of a heap data structure."""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+from priority_queue_interface import PriorityQueueInterface
 
 
+@dataclass
 class Heap(PriorityQueueInterface):
-    def __init__(self):
-        self.size = 0
-        self.A = []
-        # Non considero la posizione 0 dell' array in nessun caso, rimarrà vuota
+    """Implementation of a heap data structure."""
 
-    def parent(self, i):
-        return (i-1) // 2
+    size: int = field(init=False, default=0)
+    """Size of the heap."""
+    queue: list[float | int] = field(init=False, default_factory=list)
+    """Heap data structure."""
 
-    def left(self, i):
-        return 2*i + 1
+    def parent(self, i: int) -> int:
+        """Get the parent index of a node."""
+        return (i - 1) // 2
 
-    def right(self, i):
-        return 2*i + 2
+    def left(self, i) -> int:
+        """Get the left child index of a node."""
+        return 2 * i + 1
 
-    def swap(self, a, b):
-        self.A[a], self.A[b] = self.A[b], self.A[a]
+    def right(self, i) -> int:
+        """Get the right child index of a node."""
+        return 2 * i + 2
 
-    def maxHeapify(self, i):
-        l = self.left(i)
-        r = self.right(i)
-        if l < self.size and self.A[l] > self.A[i]:
-            largest = l
+    def swap(self, a: int, b: int) -> None:
+        """Swap two elements in the heap given their indexes."""
+        self.queue[a], self.queue[b] = self.queue[b], self.queue[a]
+
+    def maxHeapify(self, ind: int) -> None:
+        """Max heapify a node given its index.
+
+        Complexity O(log n).
+        """
+        left = self.left(ind)
+        right = self.right(ind)
+        if left < self.size and self.queue[left] > self.queue[ind]:
+            largest = left
         else:
-            largest = i
-        if r < self.size and self.A[r] > self.A[r]:
-            largest = r
-        if largest != i:
-            self.swap(i, largest)
+            largest = ind
+        if right < self.size and self.queue[right] > self.queue[largest]:
+            largest = right
+        if largest != ind:
+            self.swap(ind, largest)
             self.maxHeapify(largest)
 
-    def maximum(self):
-        return self.A[0]
+    def maximum(self) -> float | int | None:
+        """Return the maximum element in the priority queue.
 
-    def extractMax(self):
-        temp = self.A[0]
-        self.A[0] = self.A[self.size-1]
-        self.size -= 1
-        self.maxHeapify(0)
+        Complexity O(1).If the heap is empty, return None.
+        """
+        return self.queue[0] if self.size > 0 else None
+
+    def extractMax(self) -> float | int | None:
+        """Extract the maximum element from the priority queue.
+
+        Complexity O(log n).
+        If the heap is empty, return None.
+        """
+        if self.size == 0:
+            return None
+        else:
+            temp = self.queue[0]
+            self.size -= 1
+            self.queue[0] = self.queue[self.size]
+            del self.queue[self.size]
+            self.maxHeapify(0)
         return temp
 
-    def insert(self, data):
-        self.A.insert(self.size, data)
-        i = self.size
-        while self.A[i] > self.A[self.parent(i)]:
-            self.swap(i, self.parent(i))
-            i = self.parent(i)
+    def insert(self, data: float | int) -> None:
+        """Insert an element in the priority queue.
+
+        Complexity O(log n).
+        """
+        self.queue.append(data)
+        current = self.size
+        parent = self.parent(current)
+        while parent >= 0 and self.queue[current] > self.queue[parent]:
+            self.swap(current, parent)
+            current = parent
+            parent = self.parent(current)
         self.size += 1
-
-
-

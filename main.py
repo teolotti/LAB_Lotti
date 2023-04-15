@@ -1,110 +1,219 @@
-import random
+"""Main file for the project."""
+
+from dataclasses import dataclass, field
+from enum import Enum
+from timeit import default_timer as timer
 
 import numpy as np
+import pandas as pd
+import plotly.express as px
 
-from linked_list import *
-from node import *
-from ord_linked_list import *
-from heap import *
-import numpy as num
-from timeit import default_timer as timer
-import matplotlib.pyplot as plt
-import sys
-
-sys.setrecursionlimit(100000)
-R = 5000
+from heap import Heap
+from linked_list import LinkedList
+from ord_linked_list import OrdLinkedList
+from priority_queue_interface import PriorityQueueInterface
 
 
-def randomList(n, r):
-    a = []
-    for i in range(n):
-        el = random.randint(0, r)
-        a.append(el)
-    return a
+class InputType(Enum):
+    """Select the type of input."""
+
+    random = 1
+    """Random input."""
+    sorted = 2
+    """Sorted input."""
+    reversed = 3
+    """Reversed input."""
 
 
-def createQueue(heap, ord=False):
-    if heap:
-        q = Heap()
-    elif not ord:
-        q = LinkedList()
-    else:
-        q = OrdLinkedList()
-    return q
+class SelectQueueType(Enum):
+    """Select the type of queue to use."""
+
+    heap = 1
+    """Heap implementation."""
+    linked_list = 2
+    """Linked list implementation."""
+    ord_linked_list = 3
+    """Ordered linked list implementation."""
 
 
-def insertTimeTest(n, queue, random, r, reversed=False):
-    insertTime = []
+@dataclass
+class InputConfig:
+    """Input configuration."""
 
-    values = randomList(n, r)
-    if not random:
-        np.sort(values)
-        if reversed:
-            values = values[::-1]
+    num_samples: int = 1000
+    """Number of samples."""
+    sample_range: tuple[int, int] = (0, 5000)
+    """Range of the samples."""
+    input_type: InputType = InputType.random
+    """Type of input."""
 
-    for i in values:
+
+@dataclass
+class InputGenerator:
+    """Input generator."""
+
+    input_config: InputConfig = InputConfig()
+    """Input configuration."""
+
+    data: list[int] = field(init=False, default_factory=list)
+    """Data to be used for the tests."""
+
+    def __post_init__(self):
+        """Initialize the data."""
+        self.data = self._generate()
+
+    def _generate(self) -> list[int]:
+        """Generate the data."""
+        match self.input_config.input_type:
+            case InputType.random:
+                data = np.random.randint(
+                    self.input_config.sample_range[0],
+                    self.input_config.sample_range[1],
+                    self.input_config.num_samples,
+                )
+            case InputType.sorted:
+                data = np.arange(self.input_config.num_samples)
+            case InputType.reversed:
+                data = np.arange(self.input_config.num_samples)[::-1]
+            case _:
+                raise ValueError("Invalid input type.")
+        return data.tolist()
+
+    def regenerate(self):
+        """Regenerate the data."""
+        self.data = self._generate()
+
+
+def insert_times(queue: PriorityQueueInterface, input_data: list[int]) -> pd.DataFrame:
+    """Test the insert time."""
+    ins_times = np.zeros(len(input_data))
+    for ind, data in enumerate(input_data):
         start = timer()
-        queue.insert(i)
+        queue.insert(data)
         end = timer()
-        insertTime.append((end - start) / queue.size)  # WHY
+        ins_times[ind] = (end - start) / queue.size
 
-    for i in range(1, n):
-        insertTime[i] += insertTime[i - 1]
+    ins_times = np.cumsum(ins_times)
+    return pd.DataFrame(
+        data={
+            "time": ins_times,
+            "time_type": "Insertion",
+            "sample_index": np.arange(len(input_data)),
+        }
+    )
 
-    return insertTime
 
-
-def extractTimeTest(queue):
+def extract_times(queue: PriorityQueueInterface) -> pd.DataFrame:
+    """Test the extract time."""
     n = queue.size
-    extractTime = []
+    indexes = np.arange(n)[::-1]
+    extr_times = np.zeros(n)
 
-    for i in range(n):
+    for ind in indexes:
         start = timer()
         queue.extractMax()
         end = timer()
-        extractTime.insert(queue.size, (end - start)/ (queue.size + 1))
+        extr_times[ind] = (end - start) / ind if ind != 0 else (end - start)
 
-    for i in range(1, n):
-        extractTime[i] += extractTime[i - 1]
-
-    return extractTime
-
-
-def plot_generator(q_type, n, ins_test, ex_test, rand, style="", ord=False, rev=False, r=R):
-    # heap se q_type == True, lista altrimenti
-    # lista ordinata se ord == True, lista classica altrimenti
-    # n: numero di elementi inseriti/estratti dalla coda
-    # insert test se ins_test == True
-    # extract test se ex_test == True
-    # style == "o" per plot discreto + lettera per il colore
-    # input randomizzato se rand == True, ordinato altrimenti
-    # r: range dei numeri in input
-    # input reversed (decrescente) se rev == True, crescente altrimenti
-
-    q = createQueue(q_type, ord)
-    it = insertTimeTest(n, q, rand, r, rev)
-    print(it) #per capire
-    et = extractTimeTest(q)
-    if ins_test:
-        plt.plot(np.arange(n), it, style) # "o" per plot discreto, altre lettere per colore
-    if ex_test:
-        plt.plot(np.arange(n), et, style)
-    plt.xlabel("Numero di operazioni")
-    plt.ylabel("Tempo(s)")
+    extr_times = np.cumsum(extr_times)
+    return pd.DataFrame(
+        data={
+            "time": extr_times,
+            "time_type": "Extraction",
+            "sample_index": np.arange(n),
+        }
+    )
 
 
-def main():
-    # PRIMO TEST
-    plot_generator(True, 1000, True, False, True)
-    plot_generator(False, 1000, True, False, True)
-    plot_generator(False, 1000, True, False, True, "", True)
+def queue_times(
+    queue_type: SelectQueueType,
+    input_gen: InputGenerator,
+) -> pd.DataFrame:
+    """Generate the plots.
+
+    Args:
+        q_type: Type of queue to use.
+        input_data: Input data to use.
+
+    Returns:
+        A pandas DataFrame with the times.
+    """
+    queue: PriorityQueueInterface
+    match queue_type:
+        case SelectQueueType.heap:
+            queue = Heap()
+        case SelectQueueType.linked_list:
+            queue = LinkedList()
+        case SelectQueueType.ord_linked_list:
+            queue = OrdLinkedList()
+        case _:
+            raise ValueError("Invalid queue type.")
+    input_data = input_gen.data
+    it = insert_times(queue=queue, input_data=input_data)
+    et = extract_times(queue=queue)
+
+    q_times_df = pd.concat([it, et], ignore_index=True)
+    q_times_df["queue_type"] = queue_type.name
+    q_times_df["input_type"] = input_gen.input_config.input_type.name
+    return q_times_df
 
 
-    # plt.xlabel--plt.ylabel--plt.title--plt.legend--plt.show
+def compare_time_complexity() -> None:
+    """Compare the time complexity of the different implementations."""
+    input_config = InputConfig(
+        num_samples=1000, sample_range=(0, 5000), input_type=InputType.random
+    )
+    input_gen = InputGenerator(input_config)
+    df_heap_1 = queue_times(SelectQueueType.heap, input_gen)
+    df_list_1 = queue_times(SelectQueueType.linked_list, input_gen)
+    df_ord_list_1 = queue_times(SelectQueueType.ord_linked_list, input_gen)
 
-    plt.legend(["heap", "lista", "lista ord"])
-    plt.show()
+    input_config.input_type = InputType.sorted
+    input_gen = InputGenerator(input_config)
+    df_heap_2 = queue_times(SelectQueueType.heap, input_gen)
+    df_list_2 = queue_times(SelectQueueType.linked_list, input_gen)
+    df_ord_list_2 = queue_times(SelectQueueType.ord_linked_list, input_gen)
+
+    input_config.input_type = InputType.reversed
+    input_gen = InputGenerator(input_config)
+    df_heap_3 = queue_times(SelectQueueType.heap, input_gen)
+    df_list_3 = queue_times(SelectQueueType.linked_list, input_gen)
+    df_ord_list_3 = queue_times(SelectQueueType.ord_linked_list, input_gen)
+
+    df_times = pd.concat(
+        [
+            df_heap_1,
+            df_list_1,
+            df_ord_list_1,
+            # df_heap_2,
+            # df_list_2,
+            # df_ord_list_2,
+            # df_heap_3,
+            # df_list_3,
+            # df_ord_list_3,
+        ],
+        ignore_index=True,
+    )
+    # figure = px.line(
+    #     df_times,
+    #     x="sample_index",
+    #     y="time",
+    #     color="input_type",
+    #     title="Tempi",
+    #     facet_row="time_type",
+    #     facet_col="queue_type",
+    #     labels={"sample_index": "Numero di operazioni"},
+    # )
+    figure = px.line(
+        df_times.loc[df_times["time_type"] == "Extraction"],
+        x="sample_index",
+        y="time",
+        color="queue_type",
+        title="Tempi",
+        labels={"sample_index": "Numero di operazioni"},
+    )
+    figure.show()
 
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    compare_time_complexity()
