@@ -1,12 +1,13 @@
 """Main file for the project."""
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field  # dataclass, field useful for creating classes
+# with default values and type hints
 from enum import Enum
 from timeit import default_timer as timer
 
 import numpy as np
-import pandas as pd
-import plotly.express as px
+import pandas as pd  # pandas useful for creating dataframes
+import plotly.express as px  # plotly useful for creating plots
 
 from heap import Heap
 from linked_list import LinkedList
@@ -79,10 +80,6 @@ class InputGenerator:
                 raise ValueError("Invalid input type.")
         return data.tolist()
 
-    def regenerate(self):
-        """Regenerate the data."""
-        self.data = self._generate()
-
 
 def insert_times(queue: PriorityQueueInterface, input_data: list[int]) -> pd.DataFrame:
     """Test the insert time."""
@@ -126,8 +123,8 @@ def extract_times(queue: PriorityQueueInterface) -> pd.DataFrame:
 
 
 def queue_times(
-    queue_type: SelectQueueType,
-    input_gen: InputGenerator,
+        queue_type: SelectQueueType,
+        input_gen: InputGenerator,
 ) -> pd.DataFrame:
     """Generate the plots.
 
@@ -194,24 +191,24 @@ def compare_time_complexity() -> None:
         ],
         ignore_index=True,
     )
-    # figure = px.line(
-    #     df_times,
-    #     x="sample_index",
-    #     y="time",
-    #     color="input_type",
-    #     title="Tempi",
-    #     facet_row="time_type",
-    #     facet_col="queue_type",
-    #     labels={"sample_index": "Numero di operazioni"},
-    # )
     figure = px.line(
-        df_times.loc[df_times["time_type"] == "Extraction"],
+        df_times,
         x="sample_index",
         y="time",
-        color="queue_type",
+        color="input_type",
         title="Tempi",
+        facet_row="time_type",
+        facet_col="queue_type",
         labels={"sample_index": "Numero di operazioni"},
     )
+    # figure = px.line(
+    #     df_times.loc[df_times["time_type"] == "Extraction"],
+    #     x="sample_index",
+    #     y="time",
+    #     color="queue_type",
+    #     title="Tempi",
+    #     labels={"sample_index": "Numero di operazioni"},
+    # )
     figure.show()
 
 
