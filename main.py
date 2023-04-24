@@ -126,7 +126,7 @@ def queue_times(
         queue_type: SelectQueueType,
         input_gen: InputGenerator,
 ) -> pd.DataFrame:
-    """Generate the plots.
+    """Generate the times for the different queues.
 
     Args:
         q_type: Type of queue to use.
@@ -155,7 +155,7 @@ def queue_times(
     return q_times_df
 
 
-def compare_time_complexity() -> None:
+def compare_times() -> None:
     """Compare the time complexity of the different implementations."""
     input_config = InputConfig(
         num_samples=1000, sample_range=(0, 5000), input_type=InputType.random
@@ -213,4 +213,4 @@ def compare_time_complexity() -> None:
 
 
 if __name__ == "__main__":
-    compare_time_complexity()
+    compare_times()
