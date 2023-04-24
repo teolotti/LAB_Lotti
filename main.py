@@ -91,6 +91,7 @@ def insert_times(queue: PriorityQueueInterface, input_data: list[int]) -> pd.Dat
         ins_times[ind] = (end - start) / queue.size
 
     ins_times = np.cumsum(ins_times)
+
     return pd.DataFrame(
         data={
             "time": ins_times,
@@ -110,9 +111,10 @@ def extract_times(queue: PriorityQueueInterface) -> pd.DataFrame:
         start = timer()
         queue.extractMax()
         end = timer()
-        extr_times[ind] = (end - start) / ind if ind != 0 else (end - start)
+        extr_times[ind] = (end - start) / (ind+1)
 
     extr_times = np.cumsum(extr_times)
+
     return pd.DataFrame(
         data={
             "time": extr_times,
@@ -129,8 +131,8 @@ def queue_times(
     """Generate the times for the different queues.
 
     Args:
-        q_type: Type of queue to use.
-        input_data: Input data to use.
+        queue_type: Type of queue to use.
+        input_gen: Generator of the input data.
 
     Returns:
         A pandas DataFrame with the times.
@@ -158,7 +160,7 @@ def queue_times(
 def compare_times() -> None:
     """Compare the time complexity of the different implementations."""
     input_config = InputConfig(
-        num_samples=1000, sample_range=(0, 5000), input_type=InputType.random
+        num_samples=100, sample_range=(0, 5000), input_type=InputType.random
     )
     input_gen = InputGenerator(input_config)
     df_heap_1 = queue_times(SelectQueueType.heap, input_gen)
@@ -182,33 +184,47 @@ def compare_times() -> None:
             df_heap_1,
             df_list_1,
             df_ord_list_1,
-            # df_heap_2,
-            # df_list_2,
-            # df_ord_list_2,
-            # df_heap_3,
-            # df_list_3,
-            # df_ord_list_3,
+            df_heap_2,
+            df_list_2,
+            df_ord_list_2,
+            df_heap_3,
+            df_list_3,
+            df_ord_list_3,
         ],
         ignore_index=True,
     )
-    figure = px.line(
-        df_times,
-        x="sample_index",
-        y="time",
-        color="input_type",
-        title="Tempi",
-        facet_row="time_type",
-        facet_col="queue_type",
-        labels={"sample_index": "Numero di operazioni"},
-    )
     # figure = px.line(
-    #     df_times.loc[df_times["time_type"] == "Extraction"],
+    #     df_times,
     #     x="sample_index",
     #     y="time",
-    #     color="queue_type",
-    #     title="Tempi",
-    #     labels={"sample_index": "Numero di operazioni"},
+    #     color="time_type",
+    #     title="100 elementi",
+    #     facet_col="queue_type",
+    #     facet_row="input_type",
+    #     labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input", "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
     # )
+    # figure = px.line(
+    #     df_times,
+    #     x="sample_index",
+    #     y="time",
+    #     color="input_type",
+    #     facet_col="queue_type",
+    #     facet_row="time_type",
+    #     title="1000 elementi",
+    #     labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input", "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
+    # )
+    #
+    figure = px.line(
+        df_times.query("queue_type == 'heap'"),
+        x="sample_index",
+        y="time",
+        color="time_type",
+        facet_col="input_type",
+        facet_row="queue_type",
+        title="100 elementi",
+        labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input",
+                "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
+    )
     figure.show()
 
 
