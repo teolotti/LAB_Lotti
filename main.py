@@ -111,7 +111,7 @@ def extract_times(queue: PriorityQueueInterface) -> pd.DataFrame:
         start = timer()
         queue.extractMax()
         end = timer()
-        extr_times[ind] = (end - start) / (ind+1)
+        extr_times[ind] = (end - start) / (ind + 1)
 
     extr_times = np.cumsum(extr_times)
 
@@ -160,7 +160,7 @@ def queue_times(
 def compare_times() -> None:
     """Compare the time complexity of the different implementations."""
     input_config = InputConfig(
-        num_samples=100, sample_range=(0, 5000), input_type=InputType.random
+        num_samples=10000, sample_range=(0, 5000), input_type=InputType.random
     )
     input_gen = InputGenerator(input_config)
     df_heap_1 = queue_times(SelectQueueType.heap, input_gen)
@@ -215,7 +215,7 @@ def compare_times() -> None:
     # )
     #
     figure = px.line(
-        df_times.query("queue_type == 'heap'"),
+        df_times,
         x="sample_index",
         y="time",
         color="time_type",
@@ -226,6 +226,9 @@ def compare_times() -> None:
                 "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
     )
     figure.show()
+    df_times["time"] = round(df_times["time"] * 1000000, 2)
+    df_times.query("sample_index == 999").to_latex("1000.tex")
+    df_times.query("sample_index == 9999").to_latex("10000.tex")
 
 
 if __name__ == "__main__":
