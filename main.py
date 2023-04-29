@@ -199,16 +199,16 @@ def compare_times() -> None:
     #     y="time",
     #     color="time_type",
     #     title="100 elementi",
-    #     facet_col="queue_type",
-    #     facet_row="input_type",
+    #     facet_col="input_type",
+    #     facet_row="queue_type",
     #     labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input", "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
     # )
     # figure = px.line(
     #     df_times,
     #     x="sample_index",
     #     y="time",
-    #     color="input_type",
-    #     facet_col="queue_type",
+    #     color="queue_type",
+    #     facet_col="input_type",
     #     facet_row="time_type",
     #     title="1000 elementi",
     #     labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input", "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
@@ -221,14 +221,21 @@ def compare_times() -> None:
         color="time_type",
         facet_col="input_type",
         facet_row="queue_type",
-        title="100 elementi",
+        title="10000 elementi",
         labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input",
                 "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
     )
+    figure.update_layout(
+        font=dict(
+            family="Courier New, monospace",
+            size=18,  # Set the font size here
+            color="Black"
+        )
+    )
     figure.show()
-    df_times["time"] = round(df_times["time"] * 1000000, 2)
-    df_times.query("sample_index == 999").to_latex("1000.tex")
-    df_times.query("sample_index == 9999").to_latex("10000.tex")
+    # df_times["time"] = round(df_times["time"] * 1000000, 2)
+    # df_times.query("sample_index == 999").to_latex("1000.tex")
+    # df_times.query("sample_index == 9999").to_latex("10000.tex")
 
 
 if __name__ == "__main__":
