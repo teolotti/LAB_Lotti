@@ -207,13 +207,13 @@ def compare_times() -> None:
     #     df_times,
     #     x="sample_index",
     #     y="time",
-    #     color="queue_type",
-    #     facet_col="input_type",
+    #     color="input_type",
+    #     facet_col="queue_type",
     #     facet_row="time_type",
     #     title="1000 elementi",
     #     labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input", "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
     # )
-    #
+
     figure = px.line(
         df_times,
         x="sample_index",
@@ -227,8 +227,8 @@ def compare_times() -> None:
     )
     figure.update_layout(
         font=dict(
-            family="Courier New, monospace",
-            size=18,  # Set the font size here
+            family="Arial",
+            size=24,  # Set the font size here
             color="Black"
         )
     )
