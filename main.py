@@ -1,5 +1,5 @@
 """Main file for the project."""
-
+import sys
 from dataclasses import dataclass, field  # dataclass, field useful for creating classes
 # with default values and type hints
 from enum import Enum
@@ -13,6 +13,10 @@ from heap import Heap
 from linked_list import LinkedList
 from ord_linked_list import OrdLinkedList
 from priority_queue_interface import PriorityQueueInterface
+import copy
+
+M = 50
+sys.setrecursionlimit(10000000)
 
 
 class InputType(Enum):
@@ -83,18 +87,20 @@ class InputGenerator:
 
 def insert_times(queue: PriorityQueueInterface, input_data: list[int]) -> pd.DataFrame:
     """Test the insert time."""
-    ins_times = np.zeros(len(input_data))
-    for ind, data in enumerate(input_data):
-        start = timer()
-        queue.insert(data)
-        end = timer()
-        ins_times[ind] = (end - start) / queue.size
-
-    ins_times = np.cumsum(ins_times)
+    ins_times = np.zeros((M, len(input_data)))
+    for i in range(M):
+        for _ in np.arange(queue.size):
+            queue.extractMax()
+        for ind, data in enumerate(input_data):
+            start = timer()
+            queue.insert(data)
+            end = timer()
+            ins_times[i, ind] = (end - start)
+    ins_mean_times = np.mean(ins_times, axis=0, dtype=np.float32)
 
     return pd.DataFrame(
         data={
-            "time": ins_times,
+            "time": ins_mean_times,
             "time_type": "Insertion",
             "sample_index": np.arange(len(input_data)),
         }
@@ -105,19 +111,20 @@ def extract_times(queue: PriorityQueueInterface) -> pd.DataFrame:
     """Test the extract time."""
     n = queue.size
     indexes = np.arange(n)[::-1]
-    extr_times = np.zeros(n)
+    extr_times = np.zeros((M, n))
+    for i in range(M):
+        queue_copy = copy.deepcopy(queue)
+        for ind in indexes:
+            start = timer()
+            queue_copy.extractMax()
+            end = timer()
+            extr_times[i, ind] = (end - start)
 
-    for ind in indexes:
-        start = timer()
-        queue.extractMax()
-        end = timer()
-        extr_times[ind] = (end - start) / (ind + 1)
-
-    extr_times = np.cumsum(extr_times)
+    extr_mean_times = np.mean(extr_times, axis=0, dtype=np.float32)
 
     return pd.DataFrame(
         data={
-            "time": extr_times,
+            "time": extr_mean_times,
             "time_type": "Extraction",
             "sample_index": np.arange(n),
         }
@@ -160,7 +167,7 @@ def queue_times(
 def compare_times() -> None:
     """Compare the time complexity of the different implementations."""
     input_config = InputConfig(
-        num_samples=10000, sample_range=(0, 5000), input_type=InputType.random
+        num_samples=1000, sample_range=(0, 5000), input_type=InputType.random
     )
     input_gen = InputGenerator(input_config)
     df_heap_1 = queue_times(SelectQueueType.heap, input_gen)
@@ -203,28 +210,28 @@ def compare_times() -> None:
     #     facet_row="queue_type",
     #     labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input", "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
     # )
+    figure = px.line(
+        df_times.loc[df_times["queue_type"] == "heap"],
+        x="sample_index",
+        y="time",
+        color="input_type",
+        facet_col="queue_type",
+        facet_row="time_type",
+        title="1000 elementi",
+        labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input", "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
+    )
+
     # figure = px.line(
     #     df_times,
     #     x="sample_index",
     #     y="time",
-    #     color="input_type",
-    #     facet_col="queue_type",
-    #     facet_row="time_type",
-    #     title="1000 elementi",
-    #     labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input", "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
+    #     color="time_type",
+    #     facet_col="input_type",
+    #     facet_row="queue_type",
+    #     title="10000 elementi",
+    #     labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input",
+    #             "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
     # )
-
-    figure = px.line(
-        df_times,
-        x="sample_index",
-        y="time",
-        color="time_type",
-        facet_col="input_type",
-        facet_row="queue_type",
-        title="10000 elementi",
-        labels={"sample_index": "Numero di operazioni", "time": "Tempo", "input_type": "Tipo di input",
-                "time_type": "Tipo di operazione", "queue_type": "Tipo di coda"},
-    )
     figure.update_layout(
         font=dict(
             family="Arial",
