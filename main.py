@@ -85,50 +85,31 @@ class InputGenerator:
         return data.tolist()
 
 
-def insert_times(queue: PriorityQueueInterface, input_data: list[int]) -> pd.DataFrame:
+def insert_times(queue: PriorityQueueInterface, input_data: list[int]) -> np.array(float):
     """Test the insert time."""
-    ins_times = np.zeros((M, len(input_data)))
-    for i in range(M):
-        for _ in np.arange(queue.size):
-            queue.extractMax()
-        for ind, data in enumerate(input_data):
-            start = timer()
-            queue.insert(data)
-            end = timer()
-            ins_times[i, ind] = (end - start)
-    ins_mean_times = np.mean(ins_times, axis=0, dtype=np.float32)
+    ins_times = np.zeros(len(input_data))
 
-    return pd.DataFrame(
-        data={
-            "time": ins_mean_times,
-            "time_type": "Insertion",
-            "sample_index": np.arange(len(input_data)),
-        }
-    )
+    for ind, data in enumerate(input_data):
+        start = timer()
+        queue.insert(data)
+        end = timer()
+        ins_times[ind] = (end - start)
+
+    return ins_times
 
 
-def extract_times(queue: PriorityQueueInterface) -> pd.DataFrame:
+def extract_times(queue: PriorityQueueInterface) -> np.array(float):
     """Test the extract time."""
     n = queue.size
     indexes = np.arange(n)[::-1]
-    extr_times = np.zeros((M, n))
-    for i in range(M):
-        queue_copy = copy.deepcopy(queue)
-        for ind in indexes:
-            start = timer()
-            queue_copy.extractMax()
-            end = timer()
-            extr_times[i, ind] = (end - start)
+    extr_times = np.zeros(n)
+    for ind in indexes:
+        start = timer()
+        queue.extractMax()
+        end = timer()
+        extr_times[ind] = (end - start)
 
-    extr_mean_times = np.mean(extr_times, axis=0, dtype=np.float32)
-
-    return pd.DataFrame(
-        data={
-            "time": extr_mean_times,
-            "time_type": "Extraction",
-            "sample_index": np.arange(n),
-        }
-    )
+    return extr_times
 
 
 def queue_times(
@@ -154,9 +135,34 @@ def queue_times(
             queue = OrdLinkedList()
         case _:
             raise ValueError("Invalid queue type.")
-    input_data = input_gen.data
-    it = insert_times(queue=queue, input_data=input_data)
-    et = extract_times(queue=queue)
+
+    n = len(input_gen.data)
+    ins_times = np.zeros((M, n))
+    extr_times = np.zeros((M, n))
+
+    for i in range(M):
+        ins_times[i] = insert_times(queue, input_gen.data)
+        extr_times[i] = extract_times(queue)
+        input_gen = InputGenerator(input_gen.input_config)
+
+    ins_mean_times = np.mean(ins_times, axis=0)
+    extr_mean_times = np.mean(extr_times, axis=0)
+
+    it = pd.DataFrame(
+        data={
+            "time": ins_mean_times,
+            "time_type": "Insertion",
+            "sample_index": np.arange(n),
+        }
+    )
+
+    et = pd.DataFrame(
+        data={
+            "time": extr_mean_times,
+            "time_type": "Extraction",
+            "sample_index": np.arange(n),
+        }
+    )
 
     q_times_df = pd.concat([it, et], ignore_index=True)
     q_times_df["queue_type"] = queue_type.name
